@@ -1,0 +1,31 @@
+{%- comment -%} Runs before every view. Icon, zone helpers, favourite-team resolution. {%- endcomment -%}
+
+{%- capture svg_logo -%}
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M7 4h10v4a5 5 0 0 1-10 0V4z"/>
+  <path d="M7 5H4v2a3 3 0 0 0 3 3"/>
+  <path d="M17 5h3v2a3 3 0 0 1-3 3"/>
+  <path d="M12 13v4"/>
+  <path d="M8.5 20h7"/>
+  <path d="M10 17h4l1 3H9l1-3z"/>
+</svg>
+{%- endcapture -%}
+
+{%- comment -%} show_zones is a boolean field; treat anything but an explicit false as on. {%- endcomment -%}
+{%- assign zones_on = true -%}
+{%- if show_zones == false or show_zones == 'false' or show_zones == 'no' -%}
+  {%- assign zones_on = false -%}
+{%- endif -%}
+
+{%- assign fav_name = '' -%}
+{%- if fav -%}{%- assign fav_name = fav.t -%}{%- endif -%}
+
+{%- comment -%} Short status word for the favourite team's qualification zone. {%- endcomment -%}
+{%- assign fav_zone_label = '' -%}
+{%- if fav -%}
+  {%- case fav.z -%}
+    {%- when 1 -%}{%- assign fav_zone_label = 'R16' -%}
+    {%- when 2 -%}{%- assign fav_zone_label = 'Play-off' -%}
+    {%- else -%}{%- assign fav_zone_label = 'Out' -%}
+  {%- endcase -%}
+{%- endif -%}

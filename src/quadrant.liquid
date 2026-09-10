@@ -1,0 +1,63 @@
+<div class="layout layout--col gap--small">
+  {%- if error == 1 or count == 0 -%}
+    <div class="layout layout--center h--full"><span class="title title--small">Standings unavailable</span></div>
+
+  {%- elsif fav -%}
+    {%- comment -%} Favourite-team focus: position, points, and the two cut-line gaps. {%- endcomment -%}
+    <div class="flex flex--row flex--between flex--center-y">
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="value value--xlarge value--tnums">{{ fav.r }}</span>
+          <span class="label label--small" data-clamp="1">{{ fav.t }}</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="content">
+          <span class="value value--large value--tnums">{{ fav.pts }}</span>
+          <span class="label label--small">Points</span>
+        </div>
+      </div>
+    </div>
+    <div class="border--h"></div>
+    <div class="grid grid--cols-3 gap--small">
+      <div class="item">
+        <div class="content">
+          <span class="value value--small value--tnums">{{ fav.w }}-{{ fav.d }}-{{ fav.l }}</span>
+          <span class="label label--small">W-D-L</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="content">
+          <span class="value value--small value--tnums">{{ fav.gd }}</span>
+          <span class="label label--small">GD</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="content">
+          <span class="value value--small" data-clamp="1">{{ fav_zone_label }}</span>
+          <span class="label label--small">Status</span>
+        </div>
+      </div>
+    </div>
+
+  {%- else -%}
+    {%- comment -%} No favourite club set: show the qualification places. {%- endcomment -%}
+    <table class="table table--xsmall">
+      <tbody>
+        {%- for row in teams limit: 5 -%}
+          <tr>
+            <td class="w--6"><span class="label label--small text--gray-40 value--tnums">{{ row.r }}</span></td>
+            <td><span class="label label--small" data-clamp="1">{{ row.t }}</span></td>
+            <td class="w--10"><span class="label label--small text--bold value--tnums">{{ row.pts }}</span></td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+  {%- endif -%}
+</div>
+<div class="title_bar">
+  <img class="image image-stroke" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" />
+  <span class="title">UCL</span>
+  <span class="instance">MD {{ matchday }}</span>
+</div>

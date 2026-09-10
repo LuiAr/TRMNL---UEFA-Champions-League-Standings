@@ -1,0 +1,61 @@
+<div class="layout layout--col layout--top gap--none pt--2">
+  {%- if error == 1 or count == 0 -%}
+    <div class="layout layout--center h--full"><span class="title">{{ error_message | default: 'Standings unavailable' }}</span></div>
+  {%- else -%}
+    <table class="table table--xsmall lg:table--small">
+      <thead>
+        <tr>
+          <th class="w--6"><span class="label label--small text--gray-40">#</span></th>
+          <th><span class="label label--small text--gray-40">Team</span></th>
+          <th class="w--10"><span class="label label--small text--gray-40 text--right">GD</span></th>
+          <th class="w--10"><span class="label label--small text--gray-40 text--right">Pts</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for row in teams limit: 16 -%}
+          {%- comment -%}
+            Per-row presentation variables.
+            Kept as assigns so no Liquid sits in an HTML tag-open or attribute position — the visual
+            editor cannot round-trip that. Zone cut lines use the framework's border--top class on the
+            first row of each new zone, so no custom CSS is needed.
+          {%- endcomment -%}
+          {%- assign is_fav = false -%}
+          {%- if fav_name != '' and row.t == fav_name -%}{%- assign is_fav = true -%}{%- endif -%}
+          {%- assign cell = '' -%}
+          {%- assign rank_ink = 'text--gray-40' -%}
+          {%- assign name_ink = '' -%}
+          {%- assign num_ink = '' -%}
+          {%- assign gp_ink = 'text--gray-30' -%}
+          {%- if is_fav -%}
+            {%- assign cell = 'bg--black' -%}
+            {%- assign rank_ink = 'text--white' -%}
+            {%- assign name_ink = 'text--white text--bold' -%}
+            {%- assign num_ink = 'text--white' -%}
+            {%- assign gp_ink = 'text--white' -%}
+          {%- endif -%}
+          {%- assign edge = '' -%}
+          {%- if row.cuttop == 1 and zones_on -%}{%- assign edge = 'border--top' -%}{%- endif -%}
+          <tr>
+            <td class="{{ cell }} {{ edge }}"><span class="label label--small value--tnums {{ rank_ink }}">{{ row.r }}</span></td>
+            <td class="{{ cell }} {{ edge }}"><span class="label label--small {{ name_ink }}" data-clamp="1">{{ row.t }}</span></td>
+            <td class="{{ cell }} {{ edge }}"><span class="label label--small value--tnums text--right {{ num_ink }}">{{ row.gd }}</span></td>
+            <td class="{{ cell }} {{ edge }}"><span class="label label--small text--bold value--tnums text--right {{ num_ink }}">{{ row.pts }}</span></td>
+          </tr>
+        {%- endfor -%}
+        {%- if fav and fav.r > 16 -%}
+          <tr>
+            <td class="bg--black border--top"><span class="label label--small text--white value--tnums">{{ fav.r }}</span></td>
+            <td class="bg--black border--top"><span class="label label--small text--white text--bold" data-clamp="1">{{ fav.t }}</span></td>
+            <td class="bg--black border--top"><span class="label label--small text--white value--tnums text--right">{{ fav.gd }}</span></td>
+            <td class="bg--black border--top"><span class="label label--small text--white text--bold value--tnums text--right">{{ fav.pts }}</span></td>
+          </tr>
+        {%- endif -%}
+      </tbody>
+    </table>
+  {%- endif -%}
+</div>
+<div class="title_bar">
+  <img class="image image-stroke" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" />
+  <span class="title">{{ comp }}</span>
+  <span class="instance">MD {{ matchday }}</span>
+</div>
