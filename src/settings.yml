@@ -60,4 +60,4 @@ custom_fields:
   github_url: https://github.com/LuiAr
 name: Football - UEFA Champions League Standings
 description: 'UEFA Champions League league-phase '
-refresh_interval: 15
+refresh_interval: 1440
