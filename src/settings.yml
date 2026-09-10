@@ -1,0 +1,63 @@
+---
+strategy: polling
+no_screen_padding: 'no'
+dark_mode: 'no'
+static_data: ''
+polling_verb: get
+framework_version: 3.3.1
+serverless_language: ''
+polling_url: 'https://standings.uefa.com/v1/standings?competitionId=1&seasonYear={% assign _s = season_year | strip %}{% if _s != '''' %}{{ _s }}{% else %}{% assign _y = ''now'' | date: ''%Y'' | times: 1 %}{% assign _m = ''now'' | date: ''%m'' | times: 1 %}{% if _m > 6 %}{{ _y | plus: 1 }}{% else %}{{ _y }}{% endif %}{% endif %}&phase=TOURNAMENT'
+polling_headers: ''
+polling_body: ''
+id: 473684
+oauth_enabled: 'false'
+oauth_pkce_enabled: 'no'
+oauth_authorize_url: ''
+oauth_token_url: ''
+oauth_scopes: ''
+oauth_scope_separator: ''
+oauth_refresh_url: ''
+oauth_auth_params: ''
+oauth_token_headers: ''
+oauth_token_site: ''
+oauth_token_params: ''
+oauth_token_request_auth_method: ''
+oauth_body_format: ''
+oauth_token_response_metadata: ''
+oauth_authorization_method: ''
+oauth_refresh_params: ''
+oauth_token_field_name: ''
+oauth_expiry_field_name: ''
+oauth_expiry_strategy: ''
+oauth_fixed_expiry_ms: ''
+custom_fields:
+- keyname: fav_team
+  field_type: string
+  name: Your Club
+  description: Highlights this club's row on every layout
+  help_text: Club name or code, e.g. Arsenal, PSG, Real Madrid, Inter. Leave blank for a neutral table.
+  placeholder: Arsenal
+  optional: true
+  maxlength: 40
+- keyname: season_year
+  field_type: string
+  name: Season (optional)
+  description: Leave blank to always track the current season
+  help_text: The season is worked out from today's date, so this normally stays empty. Enter a UEFA season year to pin an older table — 2027 means 2026-27.
+  placeholder: '2027'
+  optional: true
+  maxlength: 4
+- keyname: show_zones
+  field_type: boolean
+  name: Show qualification cut lines
+  description: Rules after 8th (direct to round of 16) and 24th (play-off cut-off)
+  default: true
+- keyname: about
+  name: Louis A.
+  field_type: author_bio
+  category: sports
+  description: The full 36-team UEFA Champions League league-phase table, updated automatically from UEFA's own data. Cut lines mark the top 8 (direct to the round of 16) and top 24 (knockout play-off places). Set your club to highlight its row on every layout. No API key or account needed.
+  github_url: https://github.com/LuiAr
+name: Football - UEFA Champions League Standings
+description: 'UEFA Champions League league-phase '
+refresh_interval: 15
