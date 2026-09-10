@@ -4,7 +4,13 @@
       <span class="title">{{ error_message | default: 'Standings unavailable' }}</span>
     </div>
   {%- else -%}
-    <div class="grid grid--cols-1 gap--large">
+    {%- comment -%}
+      Two columns in every orientation, deliberately. portrait:grid--cols-1 was tested and
+      rejected: stacking the two 18-row tables clips ranks 30-36 behind the title bar on
+      TRMNL X portrait. Two columns fit all 36 in both orientations with room to spare, and
+      gap--large already applies in portrait, so portrait:gap--large would be redundant.
+    {%- endcomment -%}
+    <div class="grid grid--cols-2 gap--large">
 
       <div>
         <table class="table table--xsmall lg:table--small">
