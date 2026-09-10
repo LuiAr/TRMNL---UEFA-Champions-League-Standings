@@ -1,3 +1,16 @@
+{%- comment -%}
+  SHARED — helper only, not a view.
+
+  This tab is prepended to every view, so it deliberately contains no `layout` wrapper and no
+  `title_bar`: each of the four views supplies its own. The publish linter checks this tab as
+  though it were a view, so it reports "Missing title_bar include" and "No layout class
+  detected" here. Both are expected. Adding either would give every view two layouts and a
+  duplicate title bar.
+
+  Contents: the title-bar icon (captured once and reused by all four views), and the per-render
+  variables derived from the plugin's form fields.
+{%- endcomment -%}
+
 {%- comment -%} Runs before every view. Icon, zone helpers, favourite-team resolution. {%- endcomment -%}
 
 {%- capture svg_logo -%}
