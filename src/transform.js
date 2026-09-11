@@ -128,10 +128,18 @@ function build(group, favQueries) {
   var favNames = [];
   var favsOut8 = [];
   var favsOut16 = [];
+  var favRanks = {};
   for (var f = 0; f < favs.length; f++) {
     favNames.push(favs[f].t);
+    favRanks[favs[f].r] = 1;
     if (favs[f].r > 8) favsOut8.push(favs[f]);
     if (favs[f].r > 16) favsOut16.push(favs[f]);
+  }
+
+  // Flag the favourite rows here rather than matching names in Liquid: the views then just
+  // test `row.fv`, with no array-membership filter involved.
+  for (var m = 0; m < teams.length; m++) {
+    teams[m].fv = favRanks[teams[m].r] ? 1 : 0;
   }
 
   var seasonYear = group.group && group.group.seasonYear;

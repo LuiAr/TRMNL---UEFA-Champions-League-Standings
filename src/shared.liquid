@@ -31,11 +31,9 @@
 {%- endif -%}
 
 {%- comment -%}
-  Favourite clubs. fav_names is an array of canonical names from the transform; `split` on an
-  empty string yields an empty array so `contains` stays safe when no clubs are set.
+  Favourite clubs are flagged per row by the transform as `row.fv`, so the views need no
+  name matching here. fav_names stays available for debugging.
 {%- endcomment -%}
-{%- assign fav_list = '' | split: ',' -%}
-{%- if fav_names -%}{%- assign fav_list = fav_names -%}{%- endif -%}
 
 {%- comment -%} Zone word for the best-placed favourite; the transform labels each one. {%- endcomment -%}
 {%- assign fav_zone_label = '' -%}
