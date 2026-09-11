@@ -2,6 +2,15 @@
   {%- if error == 1 or count == 0 -%}
     <div class="layout layout--center h--full"><span class="title">{{ error_message | default: 'Standings unavailable' }}</span></div>
   {%- else -%}
+    {%- comment -%}
+      Row budget is fixed at 16, so pinning favourites that sit outside the visible range
+      trims the top list by the same number instead of growing the table past the screen.
+    {%- endcomment -%}
+    {%- assign pin_list = favs_out16 -%}
+    {%- assign pinned = 0 -%}
+    {%- if pin_list -%}{%- assign pinned = pin_list | size -%}{%- endif -%}
+    {%- if pinned > 6 -%}{%- assign pinned = 6 -%}{%- endif -%}
+    {%- assign top_n = 16 | minus: pinned -%}
     <table class="table table--xsmall lg:table--small">
       <thead>
         <tr>
@@ -12,7 +21,7 @@
         </tr>
       </thead>
       <tbody>
-        {%- for row in teams limit: 16 -%}
+        {%- for row in teams limit: top_n -%}
           {%- comment -%}
             Per-row presentation variables.
             Kept as assigns so no Liquid sits in an HTML tag-open or attribute position — the visual
@@ -20,7 +29,7 @@
             first row of each new zone, so no custom CSS is needed.
           {%- endcomment -%}
           {%- assign is_fav = false -%}
-          {%- if fav_name != '' and row.t == fav_name -%}{%- assign is_fav = true -%}{%- endif -%}
+          {%- if fav_list contains row.t -%}{%- assign is_fav = true -%}{%- endif -%}
           {%- assign cell = '' -%}
           {%- assign rank_ink = 'text--gray-40' -%}
           {%- assign name_ink = '' -%}
@@ -42,14 +51,16 @@
             <td class="{{ cell }} {{ edge }}"><span class="label label--small text--bold value--tnums text--right {{ num_ink }}">{{ row.pts }}</span></td>
           </tr>
         {%- endfor -%}
-        {%- if fav and fav.r > 16 -%}
+        {%- for f in pin_list limit: pinned -%}
+          {%- assign pin_edge = '' -%}
+          {%- if forloop.first -%}{%- assign pin_edge = 'border--top' -%}{%- endif -%}
           <tr>
-            <td class="bg--black border--top"><span class="label label--small text--white value--tnums">{{ fav.r }}</span></td>
-            <td class="bg--black border--top"><span class="label label--small text--white text--bold" data-clamp="1">{{ fav.t }}</span></td>
-            <td class="bg--black border--top"><span class="label label--small text--white value--tnums text--right">{{ fav.gd }}</span></td>
-            <td class="bg--black border--top"><span class="label label--small text--white text--bold value--tnums text--right">{{ fav.pts }}</span></td>
+            <td class="bg--black {{ pin_edge }}"><span class="label label--small text--white value--tnums">{{ f.r }}</span></td>
+            <td class="bg--black {{ pin_edge }}"><span class="label label--small text--white text--bold" data-clamp="1">{{ f.t }}</span></td>
+            <td class="bg--black {{ pin_edge }}"><span class="label label--small text--white value--tnums text--right">{{ f.gd }}</span></td>
+            <td class="bg--black {{ pin_edge }}"><span class="label label--small text--white text--bold value--tnums text--right">{{ f.pts }}</span></td>
           </tr>
-        {%- endif -%}
+        {%- endfor -%}
       </tbody>
     </table>
   {%- endif -%}

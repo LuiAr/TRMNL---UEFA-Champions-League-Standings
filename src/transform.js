@@ -5,6 +5,10 @@
 //
 // Zone codes: 1 = direct to round of 16 (1-8), 2 = knockout play-off (9-24), 3 = eliminated (25-36).
 //
+// Favourites: the fav_team field takes a comma-separated list. Each entry is matched
+// independently against name/official name/code, deduped by team, and sorted by position.
+// `fav` stays as the best-placed match so single-club installs behave exactly as before.
+//
 // Notes:
 //  - UEFA reports tied ranks (two teams can both be "3"), so display position comes from
 //    the array order, which is the official ordering. UEFA's own rank is kept as `ur`.
@@ -37,7 +41,32 @@ function zoneFor(pos) {
   return 3;
 }
 
-function build(group, favQuery) {
+function zoneLabel(z) {
+  if (z === 1) return 'R16';
+  if (z === 2) return 'Play-off';
+  return 'Out';
+}
+
+function favObj(row, pts8, pts24) {
+  return {
+    r: row.r, t: row.t, full: row.full, a: row.a,
+    gp: row.gp, w: row.w, d: row.d, l: row.l,
+    gf: row.gf, ga: row.ga, gd: row.gd, pts: row.pts,
+    z: row.z, zl: zoneLabel(row.z),
+    d8: row.pts - pts8,
+    d24: row.pts - pts24
+  };
+}
+
+function matchTeam(teams, query) {
+  for (var i = 0; i < teams.length; i++) {
+    var row = teams[i];
+    if ((row.t + '|' + row.full + '|' + row.a).toLowerCase().indexOf(query) !== -1) return row;
+  }
+  return null;
+}
+
+function build(group, favQueries) {
   var items = group.items;
   var teams = [];
   var matchday = 0;
@@ -80,21 +109,29 @@ function build(group, favQuery) {
   var pts8 = teams[7] ? teams[7].pts : 0;
   var pts24 = teams[23] ? teams[23].pts : 0;
 
-  var fav = null;
-  if (favQuery) {
-    for (var k = 0; k < teams.length; k++) {
-      var row = teams[k];
-      if ((row.t + '|' + row.full + '|' + row.a).toLowerCase().indexOf(favQuery) !== -1) {
-        fav = {
-          r: row.r, t: row.t, full: row.full, a: row.a,
-          gp: row.gp, w: row.w, d: row.d, l: row.l,
-          gf: row.gf, ga: row.ga, gd: row.gd, pts: row.pts, z: row.z,
-          d8: row.pts - pts8,
-          d24: row.pts - pts24
-        };
-        break;
-      }
-    }
+  // Resolve each favourite independently, dropping duplicates (two queries can land on the
+  // same club) and anything that matches nothing.
+  var favs = [];
+  var missing = 0;
+  var seen = {};
+  for (var q = 0; q < favQueries.length; q++) {
+    var hit = matchTeam(teams, favQueries[q]);
+    if (!hit) { missing++; continue; }
+    if (seen[hit.r]) continue;
+    seen[hit.r] = 1;
+    favs.push(favObj(hit, pts8, pts24));
+  }
+  favs.sort(function (a, b) { return a.r - b.r; });
+
+  // Names for the views to match rows against, plus the subsets that fall outside each
+  // layout's visible range, so the half views can pin them without doing arithmetic.
+  var favNames = [];
+  var favsOut8 = [];
+  var favsOut16 = [];
+  for (var f = 0; f < favs.length; f++) {
+    favNames.push(favs[f].t);
+    if (favs[f].r > 8) favsOut8.push(favs[f]);
+    if (favs[f].r > 16) favsOut16.push(favs[f]);
   }
 
   var seasonYear = group.group && group.group.seasonYear;
@@ -110,24 +147,37 @@ function build(group, favQuery) {
     pts8: pts8,
     pts24: pts24,
     teams: teams,
-    fav: fav,
-    fav_query: favQuery,
-    fav_missing: favQuery && !fav ? 1 : 0
+    favs: favs,
+    fav: favs.length ? favs[0] : null,
+    fav_names: favNames,
+    fav_count: favs.length,
+    favs_out8: favsOut8,
+    favs_out16: favsOut16,
+    fav_query: favQueries.join(', '),
+    fav_missing: missing
   };
 }
 
-function favFrom(input) {
+var MAX_FAVS = 6;
+
+function favsFrom(input) {
   var settings = (input.trmnl && input.trmnl.plugin_settings) || {};
   var vals = settings.custom_fields_values || {};
-  return String(vals.fav_team || '').trim().toLowerCase();
+  var parts = String(vals.fav_team || '').split(',');
+  var out = [];
+  for (var i = 0; i < parts.length && out.length < MAX_FAVS; i++) {
+    var q = parts[i].trim().toLowerCase();
+    if (q && out.indexOf(q) === -1) out.push(q);
+  }
+  return out;
 }
 
 function run(input) {
-  var favQuery = favFrom(input);
+  var favQueries = favsFrom(input);
 
   // Primary path: whatever the poller retrieved.
   var group = groupFrom(input.data !== undefined ? input.data : input);
-  if (group) return build(group, favQuery);
+  if (group) return build(group, favQueries);
 
   // Never return an empty payload — that would blank the screen.
   // Prefer the last good data, else surface an explicit error state to the views.

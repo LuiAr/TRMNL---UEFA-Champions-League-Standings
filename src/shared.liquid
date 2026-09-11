@@ -30,15 +30,13 @@
   {%- assign zones_on = false -%}
 {%- endif -%}
 
-{%- assign fav_name = '' -%}
-{%- if fav -%}{%- assign fav_name = fav.t -%}{%- endif -%}
+{%- comment -%}
+  Favourite clubs. fav_names is an array of canonical names from the transform; `split` on an
+  empty string yields an empty array so `contains` stays safe when no clubs are set.
+{%- endcomment -%}
+{%- assign fav_list = '' | split: ',' -%}
+{%- if fav_names -%}{%- assign fav_list = fav_names -%}{%- endif -%}
 
-{%- comment -%} Short status word for the favourite team's qualification zone. {%- endcomment -%}
+{%- comment -%} Zone word for the best-placed favourite; the transform labels each one. {%- endcomment -%}
 {%- assign fav_zone_label = '' -%}
-{%- if fav -%}
-  {%- case fav.z -%}
-    {%- when 1 -%}{%- assign fav_zone_label = 'R16' -%}
-    {%- when 2 -%}{%- assign fav_zone_label = 'Play-off' -%}
-    {%- else -%}{%- assign fav_zone_label = 'Out' -%}
-  {%- endcase -%}
-{%- endif -%}
+{%- if fav -%}{%- assign fav_zone_label = fav.zl -%}{%- endif -%}
