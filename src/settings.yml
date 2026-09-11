@@ -33,12 +33,12 @@ oauth_fixed_expiry_ms: ''
 custom_fields:
 - keyname: fav_team
   field_type: string
-  name: Your Club
-  description: Highlights this club's row on every layout
-  help_text: Club name or code, e.g. Arsenal, PSG, Real Madrid, Inter. Leave blank for a neutral table.
-  placeholder: Arsenal
+  name: Your Clubs
+  description: Highlights these clubs' rows on every layout
+  help_text: One club, or several separated by commas — e.g. Arsenal, PSG, Real Madrid. Names or codes both work, and case does not matter. Up to 6. Leave blank for a neutral table.
+  placeholder: Arsenal, PSG
   optional: true
-  maxlength: 40
+  maxlength: 160
 - keyname: season_year
   field_type: string
   name: Season (optional)
@@ -56,7 +56,7 @@ custom_fields:
   name: Louis A.
   field_type: author_bio
   category: sports
-  description: The full 36-team UEFA Champions League league-phase table, updated automatically from UEFA's own data. Cut lines mark the top 8 (direct to the round of 16) and top 24 (knockout play-off places). Set your club to highlight its row on every layout. No API key or account needed.
+  description: The full 36-team UEFA Champions League league-phase table, updated automatically from UEFA's own data. Cut lines mark the top 8 (direct to the round of 16) and top 24 (knockout play-off places). Name one club or several to highlight their rows on every layout. No API key or account needed.
   github_url: https://github.com/LuiAr
 name: Football - UEFA Champions League Standings
 description: 'UEFA Champions League league-phase '
