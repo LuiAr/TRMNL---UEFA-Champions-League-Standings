@@ -22,6 +22,7 @@
       </thead>
       <tbody>
         {%- for row in teams limit: top_n -%}
+          {%- comment -%} BEGIN rowvars — generated from src/_rowvars.inc, do not edit here {%- endcomment -%}
           {%- comment -%}
             Per-row presentation variables.
             Kept as assigns so no Liquid sits in an HTML tag-open or attribute position — the visual
@@ -29,7 +30,7 @@
             first row of each new zone, so no custom CSS is needed.
           {%- endcomment -%}
           {%- assign is_fav = false -%}
-          {%- if fav_list contains row.t -%}{%- assign is_fav = true -%}{%- endif -%}
+          {%- if row.fv == 1 -%}{%- assign is_fav = true -%}{%- endif -%}
           {%- assign cell = '' -%}
           {%- assign rank_ink = 'text--gray-40' -%}
           {%- assign name_ink = '' -%}
@@ -44,6 +45,7 @@
           {%- endif -%}
           {%- assign edge = '' -%}
           {%- if row.cuttop == 1 and zones_on -%}{%- assign edge = 'border--top' -%}{%- endif -%}
+          {%- comment -%} END rowvars {%- endcomment -%}
           <tr>
             <td class="{{ cell }} {{ edge }}"><span class="label label--small value--tnums {{ rank_ink }}">{{ row.r }}</span></td>
             <td class="{{ cell }} {{ edge }}"><span class="label label--small {{ name_ink }}" data-clamp="1">{{ row.t }}</span></td>
